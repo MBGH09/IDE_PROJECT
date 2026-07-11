@@ -1,0 +1,7 @@
+Completed tasks:
+- add an input label between image id and button run to allow the user to 
+add the starting command so the backend doesn't have to see what is the user
+project framework
+- fix traefik doesn't work when i want to do it with nip io when user runs project
+- gives the user the url to access not just in the console
+- fix project url routing to ide and requiring manual port entry

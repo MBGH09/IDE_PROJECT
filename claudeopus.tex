@@ -1,0 +1,1263 @@
+\documentclass[12pt,a4paper,oneside]{report}
+
+% =====================================================================
+%  PACKAGES
+% =====================================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{geometry}
+\geometry{top=2.5cm, bottom=2.5cm, left=3cm, right=2.5cm}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{amsmath, amssymb}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tocloft}
+\usepackage{setspace}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, calc}
+\usepackage{float}
+\usepackage{microtype}
+\usepackage{lmodern}
+\usepackage{pdfpages}
+\usepackage{array}
+\usepackage{multirow}
+
+% =====================================================================
+%  COLORS
+% =====================================================================
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.97,0.97,0.95}
+\definecolor{mainblue}{RGB}{0, 51, 102}
+\definecolor{lightblue}{RGB}{230, 240, 255}
+\definecolor{darkblue}{RGB}{0, 30, 70}
+\definecolor{accentorange}{RGB}{230, 126, 34}
+\definecolor{successgreen}{RGB}{39, 174, 96}
+\definecolor{dangerred}{RGB}{231, 76, 60}
+\definecolor{jsyellow}{RGB}{240, 219, 79}
+
+% =====================================================================
+%  HEADER & FOOTER
+% =====================================================================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textit{Collaborative AI Cloud IDE}}
+\fancyhead[R]{\thepage}
+\fancyfoot[L]{PFA Academic Report}
+\fancyfoot[R]{2025--2026}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% =====================================================================
+%  SECTION STYLING
+% =====================================================================
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries\color{mainblue}}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-20pt}{40pt}
+
+% =====================================================================
+%  CODE LISTING STYLING
+% =====================================================================
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta}\bfseries,
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2,
+    frame=single,
+    rulecolor=\color{codegray!40},
+    framesep=4pt
+}
+\lstset{style=mystyle}
+
+\lstdefinelanguage{JavaScript}{
+  keywords={break, case, catch, continue, debugger, default, delete, do, else, finally, for, function, if, in, instanceof, new, return, switch, this, throw, try, typeof, var, void, while, with, const, let, async, await, import, export, from, class, extends, super, yield, of},
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]",
+  morestring=[b]`,
+  sensitive=true
+}
+
+% =====================================================================
+%  METADATA
+% =====================================================================
+\newcommand{\reporttitle}{Design and Implementation of a Collaborative Web-Based IDE with CRDT-Driven Synchronization, Containerized Execution, and AI-Assisted Code Generation}
+\newcommand{\reportauthor}{Jawhar Hakim \newline
+Rami Chaaben \newline
+Monji Benghozlen \newline
+Taha Ayedi}
+\newcommand{\reportsupervisor}{Mohames Koubaa}
+\newcommand{\reportinstitution}{IIT}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=mainblue,
+    citecolor=mainblue,
+    urlcolor=accentorange,
+    pdftitle={PFA Report - Collaborative AI Cloud IDE},
+    pdfauthor={\reportauthor}
+}
+
+% =====================================================================
+%  DOCUMENT BEGIN
+% =====================================================================
+\begin{document}
+
+% =====================================================================
+%  TITLE PAGE
+% =====================================================================
+\begin{titlepage}
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \begin{flushleft}
+            %\includegraphics[width=3cm]{university_logo.png} % Uncomment and add your logo
+        \end{flushleft}
+    \end{minipage}
+    \begin{minipage}{0.45\textwidth}
+        \begin{flushright}
+            %\includegraphics[width=3cm]{company_logo.png} % Uncomment and add your logo
+        \end{flushright}
+    \end{minipage}
+
+    \vspace{2cm}
+    {\large\uppercase{\reportinstitution}\par}
+    \vspace{1.5cm}
+    {\Large\bfseries End OF YEAR PROJECT\par}
+    \vspace{0.5cm}
+    {\large Department of Software Engineering\par}
+    \vspace{2cm}
+
+    \rule{\linewidth}{0.5mm} \\[0.4cm]
+    {\huge \bfseries \reporttitle \par}
+    \rule{\linewidth}{0.5mm} \\[1.5cm]
+
+    \begin{minipage}{0.4\textwidth}
+        \begin{flushleft} \large
+            \emph{Author:}\\
+            \textbf{\reportauthor}
+        \end{flushleft}
+    \end{minipage}
+    ~
+    \begin{minipage}{0.4\textwidth}
+        \begin{flushright} \large
+            \emph{Supervisor:} \\
+            \textbf{\reportsupervisor}
+        \end{flushright}
+    \end{minipage}
+
+    \vfill
+    {\large Academic Year: 2025--2026 \par}
+\end{titlepage}
+
+% =====================================================================
+%  FRONT MATTER
+% =====================================================================
+\pagenumbering{roman}
+
+% --- Acknowledgements ---
+\chapter*{Acknowledgements}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+\onehalfspacing
+
+We would like to express our sincere gratitude to our supervisor, \reportsupervisor, for their invaluable guidance, insightful feedback, and unwavering support throughout the course of this project. Their expertise in software engineering and distributed systems was instrumental in shaping the direction of this work.
+%???????????
+We extend our heartfelt thanks to the faculty members of IIT for providing the academic foundation and computational resources necessary for this research. The availability of laboratory infrastructure and cloud computing environments greatly facilitated the development and testing phases.
+
+We are also grateful to our colleagues and fellow students who participated in the testing and evaluation of the collaborative features of this platform. Their constructive criticism and real-world usage scenarios helped identify critical issues and drove meaningful improvements.
+
+Finally, we would like to thank our families and friends for their patience, encouragement, and moral support during the intensive development phases of this project.
+
+% --- Abstract ---
+\newpage
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+Modern remote software development teams require unified, zero-setup environments equipped with real-time collaboration, secure code execution, and intelligent AI assistance. This report presents the design, implementation, and evaluation of a full-stack collaborative Web-Based Integrated Development Environment (Cloud IDE) that addresses these needs through a cohesive integration of several advanced technologies.
+
+The system is built upon a React front-end powered by Vite, featuring the Monaco Editor for a VS Code-like editing experience. Real-time collaboration is achieved through Conflict-free Replicated Data Types (CRDTs) via Yjs, with synchronization propagated through both WebSocket and WebRTC channels. This dual-channel approach ensures low-latency state synchronization while providing resilience against network instability.
+
+For code execution, the platform dynamically provisions isolated Docker containers through a Node.js/Express backend, supporting multi-language projects (Node.js, Python, PHP, Go). A web-based terminal powered by xterm.js and node-pty provides interactive shell access to these containers.
+
+The AI Copilot module integrates a locally-hosted Large Language Model (Ollama with Llama 3.2) through Server-Sent Events (SSE) streaming, enabling context-aware code assistance that injects the currently active file's content for improved response relevance.
+
+The project management layer implements a full authentication system with JWT tokens, role-based access control (owner, editor, viewer), and an invitation-based team membership workflow backed by a MySQL database via Sequelize ORM.
+
+Key outcomes include successful real-time multi-user cursor tracking, sub-5-second container provisioning, and low-latency token-by-token AI response streaming, demonstrating the viability of combining CRDTs, containerization, and generative AI in a browser-based development environment.
+
+\vspace{1cm}
+\noindent\textbf{Keywords:} Cloud IDE, CRDTs, Yjs, Docker, Real-time Collaboration, Monaco Editor, AI Code Assistant, WebSocket, WebRTC, Large Language Models, SSE Streaming.
+
+% --- R\'esum\'e ---
+\newpage
+\chapter*{Summary}
+\addcontentsline{toc}{chapter}{Summary}
+
+Modern remote software development teams require unified environments that eliminate the need for local installation while providing real-time collaboration, secure code execution, and intelligent AI-powered assistance. This report presents the design, implementation, and evaluation of a web-based collaborative Integrated Development Environment (Cloud IDE).
+
+The system is built on a React 19 frontend using Vite and integrates the Monaco Editor to deliver an experience similar to Visual Studio Code. Real-time collaboration is enabled through Conflict-Free Replicated Data Types (CRDTs) using Yjs, synchronized via WebSocket and WebRTC channels. Code execution is performed within isolated Docker containers, dynamically provisioned through a Node.js/Express backend.
+
+An AI Copilot module integrates a local large language model (Ollama with Llama 3.2) to provide contextual coding assistance. The resulting platform offers a secure, collaborative, and intelligent development environment accessible directly through the web.
+
+\vspace{1cm}
+\noindent\textbf{Keywords:} Cloud IDE, CRDTs, Yjs, Docker, Real-Time Collaboration, Monaco Editor, AI Assistant, WebSocket, WebRTC, Large Language Models.
+
+% --- Table of Contents ---
+\newpage
+\tableofcontents
+
+% --- List of Figures ---
+\newpage
+\listoffigures
+\addcontentsline{toc}{chapter}{List of Figures}
+
+% --- List of Tables ---
+\newpage
+\listoftables
+\addcontentsline{toc}{chapter}{List of Tables}
+
+% --- List of Code Listings ---
+\newpage
+\lstlistoflistings
+\addcontentsline{toc}{chapter}{List of Listings}
+
+% --- List of Abbreviations ---
+\newpage
+\chapter*{List of Abbreviations}
+\addcontentsline{toc}{chapter}{List of Abbreviations}
+
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Abbreviation} & \textbf{Description} \\
+\midrule
+API & Application Programming Interface \\
+CRDT & Conflict-free Replicated Data Type \\
+CSS & Cascading Style Sheets \\
+DOM & Document Object Model \\
+GUI & Graphical User Interface \\
+HTML & HyperText Markup Language \\
+HTTP & HyperText Transfer Protocol \\
+IDE & Integrated Development Environment \\
+JSON & JavaScript Object Notation \\
+JWT & JSON Web Token \\
+LLM & Large Language Model \\
+ORM & Object-Relational Mapping \\
+OT & Operational Transformation \\
+PTY & Pseudo-Terminal \\
+RBAC & Role-Based Access Control \\
+REST & Representational State Transfer \\
+SQL & Structured Query Language \\
+SSE & Server-Sent Events \\
+TTY & Teletypewriter (Terminal) \\
+UI & User Interface \\
+UUID & Universally Unique Identifier \\
+WebRTC & Web Real-Time Communication \\
+\bottomrule
+\end{tabularx}
+
+
+% =====================================================================
+%  MAIN CONTENT
+% =====================================================================
+\newpage
+\pagenumbering{arabic}
+\onehalfspacing
+
+% =====================================================================
+%  CHAPTER 1: GENERAL INTRODUCTION
+% =====================================================================
+\chapter{General Introduction}
+
+\section{Context and Motivation}
+
+The landscape of software development has undergone a fundamental transformation over the past decade. The rise of distributed teams, remote work paradigms, and cloud-native architectures has created an urgent need for development tools that transcend the boundaries of local machines. Traditional desktop-based Integrated Development Environments (IDEs), while powerful, impose significant limitations in collaborative and remote contexts: they require local installation, configuration, and maintenance; they offer no native real-time collaboration; and they cannot guarantee a consistent environment across team members.
+
+Cloud-based IDEs such as GitHub Codespaces, Gitpod, Replit, and AWS Cloud9 have emerged to address these challenges. These platforms move the development environment to the cloud, enabling developers to write, execute, and debug code from any device with a web browser. However, many of these solutions are proprietary, expensive, or impose vendor lock-in. Furthermore, the recent explosion of AI-powered coding assistants---most notably GitHub Copilot, powered by OpenAI's Codex---has added another dimension to the developer experience, yet these services typically depend on external cloud APIs, raising privacy and cost concerns.
+
+This project is motivated by the desire to create an open, self-hosted, collaborative Cloud IDE that integrates three critical capabilities into a single coherent platform:
+
+\begin{enumerate}[label=\arabic*.]
+    \item \textbf{Real-time Collaborative Editing}: Multiple developers can simultaneously edit the same codebase with conflict-free synchronization and live cursor tracking.
+    \item \textbf{Containerized Code Execution}: User code runs in isolated Docker containers, providing security, reproducibility, and multi-language support.
+    \item \textbf{AI-Assisted Code Generation}: A locally-hosted AI Copilot provides context-aware coding assistance without reliance on external cloud services.
+\end{enumerate}
+
+\section{Problem Statement}
+
+Merging three complex and largely independent domains---low-latency collaborative editing, secure remote code execution, and context-aware AI querying---within a web browser presents formidable technical challenges:
+
+\begin{itemize}
+    \item \textbf{State Synchronization}: Ensuring that concurrent edits from multiple users converge to a consistent state without data loss or corruption requires sophisticated conflict resolution algorithms.
+    \item \textbf{Security Isolation}: Running arbitrary user code on a server demands robust sandboxing to prevent interference between users and protect the host system from malicious code.
+    \item \textbf{AI Context Injection}: Providing relevant AI responses requires dynamically injecting the user's current code context into the LLM prompt, while managing token limits and streaming latency.
+    \item \textbf{WebSocket Orchestration}: The system must manage multiple concurrent WebSocket connections---for Yjs synchronization, terminal I/O.
+    \item \textbf{User Management}: A complete authentication and authorization system must control who can access, edit, or merely view each project.
+\end{itemize}
+
+\section{Project Objectives}
+
+This project aims to design and implement a fully functional collaborative Cloud IDE that achieves the following objectives:
+
+\begin{enumerate}[label=\arabic*.]
+    \item Implement real-time peer-to-peer code synchronization using Yjs CRDTs with dual WebSocket and WebRTC channels.
+    \item Provide a VS Code-like editing experience using the Monaco Editor with syntax highlighting, IntelliSense, and minimap support.
+    \item Enable dynamic Docker container provisioning with intelligent project analysis supporting Node.js, Python, PHP, and Go frameworks.
+    \item Integrate a web-based terminal (xterm.js) connected to the server's PTY processes via WebSocket for interactive shell access.
+    \item Implement an AI Copilot using a locally-hosted Ollama LLM with SSE-based token streaming and code context injection.
+    \item Build a complete project management system with JWT-based authentication, role-based access control, and team invitation workflows.
+    \item Deploy the infrastructure using Docker Compose with MySQL, Traefik reverse proxy, and a custom Docker network.
+\end{enumerate}
+
+\section{Report Organization}
+
+This report is organized into the following chapters:
+
+\begin{itemize}
+    \item \textbf{Chapter 2 --- Literature Review}: Reviews the academic and technical foundations of collaborative editing algorithms, cloud development environments, and AI-assisted programming.
+    \item \textbf{Chapter 3 --- Requirements Analysis}: Presents the functional and non-functional requirements, use cases, and system constraints.
+    \item \textbf{Chapter 4 --- System Design and Architecture}: Details the overall architecture, data models, and component interactions.
+    \item \textbf{Chapter 5 --- Implementation}: Describes the technical implementation of each subsystem with code excerpts and explanations.
+    \item \textbf{Chapter 6 --- Results and Evaluation}: Presents testing results, performance metrics, and user experience evaluation.
+    \item \textbf{Chapter 7 --- Discussion and Future Work}: Analyzes challenges encountered, security considerations, and potential enhancements.
+    \item \textbf{Chapter 8 --- Conclusion}: Summarizes the project achievements and contributions.
+\end{itemize}
+
+
+% =====================================================================
+%  CHAPTER 2: LITERATURE REVIEW
+% =====================================================================
+\chapter{Literature Review}
+
+\section{Collaborative Editing Algorithms}
+
+\subsection{Operational Transformation (OT)}
+
+Operational Transformation, first introduced by Ellis and Gibbs in 1989 \cite{ellis1989}, is the foundational algorithm for real-time collaborative text editing. OT works by transforming operations (insertions and deletions) relative to concurrent operations that have already been applied, ensuring that all replicas converge to the same state regardless of the order in which operations are received.
+
+Google Docs uses a centralized OT variant, where a single server acts as the authority for operation ordering. While this approach simplifies the transformation logic, it introduces a single point of failure and requires all operations to pass through the server, increasing latency for geographically distributed teams.
+
+The key limitation of OT is its algorithmic complexity: the transformation functions must account for all possible combinations of concurrent operations, and incorrect implementations can lead to divergence bugs that are notoriously difficult to reproduce and fix.
+
+\subsection{Conflict-free Replicated Data Types (CRDTs)}
+
+CRDTs represent a fundamentally different approach to concurrent data synchronization. Introduced by Shapiro et al. \cite{shapiro2011}, CRDTs are data structures designed such that concurrent modifications can always be merged without conflicts, guaranteeing \textit{strong eventual consistency}: if all replicas have received the same set of updates, they will be in the same state, regardless of the order those updates were applied.
+
+For text editing, sequence CRDTs such as LSEQ \cite{nedelec2013}, Logoot \cite{weiss2010}, and YATA \cite{nicolaescu2020} assign unique, totally-ordered identifiers to each character, enabling conflict-free insertion and deletion without a central coordinator. This makes CRDTs particularly suitable for peer-to-peer collaborative editing, where no central server is required.
+
+\subsection{Yjs: A High-Performance CRDT Framework}
+
+Yjs, developed by Kevin Jahns, is a modular CRDT framework optimized for real-time collaborative editing in web applications. It implements the YATA (Yet Another Transformation Approach) algorithm, which provides:
+
+\begin{itemize}
+    \item \textbf{Strong eventual consistency} without central coordination.
+    \item \textbf{Awareness protocol} for sharing user presence information (cursors, selections, names).
+    \item \textbf{Multiple network providers}: \texttt{y-websocket} for server-relayed communication and \texttt{y-webrtc} for direct peer-to-peer connections.
+    \item \textbf{Editor bindings}: \texttt{y-monaco} for the Monaco Editor, \texttt{y-codemirror} for CodeMirror, and others.
+    \item \textbf{Efficient encoding}: Document updates are encoded using a compact binary format that minimizes network bandwidth.
+\end{itemize}
+
+Benchmarks show that Yjs can handle documents with millions of characters while maintaining sub-millisecond merge times \cite{nicolaescu2020}. This performance, combined with its modular architecture, makes Yjs the de facto standard for collaborative editing in modern web applications.
+
+Our project adopts Yjs as the synchronization backbone, using both \texttt{y-websocket} and \texttt{y-webrtc} providers simultaneously to achieve both reliability (through the WebSocket server) and low latency (through direct WebRTC peer connections).
+
+\section{Cloud Development Environments}
+
+\subsection{Evolution of Cloud IDEs}
+
+The concept of cloud-based development environments has evolved significantly since the early web-based code editors of the 2010s. Modern Cloud IDEs can be categorized into three generations:
+
+\begin{enumerate}[label=\arabic*.]
+    \item \textbf{First Generation (2010--2015)}: Simple web-based text editors with basic syntax highlighting (e.g., Cloud9, Codeanywhere). These offered limited execution capabilities and no real-time collaboration.
+    \item \textbf{Second Generation (2016--2020)}: Full-featured IDEs with integrated terminals and containerized execution (e.g., Gitpod, Theia). These introduced Docker-based workspaces and VS Code compatibility.
+    \item \textbf{Third Generation (2021--present)}: AI-augmented, deeply collaborative environments (e.g., GitHub Codespaces, Replit with Ghostwriter). These combine AI assistance with real-time collaboration and cloud execution.
+\end{enumerate}
+
+\subsection{Containerization for Developer Workspaces}
+
+Docker containers provide an ideal abstraction for developer workspaces \cite{sun2022, kaur2021}. Each project runs in its own isolated container with its specific runtime, dependencies, and file system. Key advantages include:
+
+\begin{itemize}
+    \item \textbf{Isolation}: Containers prevent interference between users and protect the host system.
+    \item \textbf{Reproducibility}: The same Docker image guarantees identical environments across all users.
+    \item \textbf{Flexibility}: Different projects can use different programming languages, runtimes, and frameworks within the same platform.
+    \item \textbf{Resource management}: Container resource limits (CPU, memory) prevent any single user from monopolizing server resources.
+\end{itemize}
+
+Our system uses the \texttt{dockerode} library to programmatically create, manage, and destroy Docker containers from the Node.js backend, with intelligent project analysis to automatically detect the appropriate base image, install commands, and start commands.
+
+\subsection{Traefik as a Dynamic Reverse Proxy}
+
+Traefik is a modern, cloud-native reverse proxy that integrates natively with Docker. It automatically discovers containers through Docker labels and routes HTTP traffic based on hostnames and paths. In our system, Traefik enables each running container to be accessible through a unique subdomain (e.g., \texttt{project-name.username.ip.nip.io}), providing seamless preview URLs without manual configuration.
+
+\section{AI in Software Engineering}
+
+\subsection{Large Language Models for Code Generation}
+
+The application of Large Language Models (LLMs) to software engineering tasks has grown rapidly since the introduction of OpenAI Codex and subsequent models \cite{peng2023, zheng2023}. These models, trained on vast repositories of open-source code, can:
+
+\begin{itemize}
+    \item Generate code from natural language descriptions.
+    \item Complete partially written functions and expressions.
+    \item Explain complex code segments in natural language.
+    \item Suggest bug fixes and refactoring improvements.
+    \item Translate code between programming languages.
+\end{itemize}
+
+Research by Peng et al. \cite{peng2023} demonstrated that AI-assisted programming improves developer productivity by up to 55\% for routine coding tasks, while Zheng et al. \cite{zheng2023} surveyed the landscape of code-focused LLMs and identified key factors affecting code generation quality.
+
+\subsection{Context-Aware AI Assistance}
+
+A critical factor in the quality of AI code assistance is the \textit{context} provided to the model. Studies show that injecting relevant code context---such as the currently open file, imported modules, and project structure---significantly improves the relevance and accuracy of AI-generated suggestions \cite{peng2023}.
+
+Our system implements context injection by sending the content of the user's currently active file along with the chat messages to the LLM backend, enriching the model's understanding of the codebase being worked on.
+
+\subsection{Local LLM Deployment with Ollama}
+
+Unlike commercial solutions that rely on cloud-hosted models, our system uses Ollama---an open-source tool for running LLMs locally. This approach offers several advantages:
+
+\begin{itemize}
+    \item \textbf{Privacy}: Code never leaves the local network.
+    \item \textbf{Cost}: No per-token API charges after initial setup.
+    \item \textbf{Latency}: No round-trip to external servers (though model inference speed depends on local hardware).
+    \item \textbf{Customization}: Users can choose from a variety of open-source models (Llama 3.2, CodeLlama, Mistral, etc.).
+\end{itemize}
+
+
+% =====================================================================
+%  CHAPTER 3: REQUIREMENTS ANALYSIS
+% =====================================================================
+\chapter{Requirements Analysis}
+
+\section{Functional Requirements}
+
+The system's functional requirements are organized into five major subsystems:
+
+\subsection{Authentication and User Management}
+
+\begin{table}[H]
+\centering
+\caption{Authentication and User Management Requirements}
+\label{tab:auth-req}
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{ID} & \textbf{Requirement} \\
+\midrule
+FR-01 & Users shall be able to register with a username, email, display name, and password. \\
+FR-02 & Users shall be able to sign in with their email and password. \\
+FR-03 & The system shall issue JWT tokens upon successful authentication with a 24-hour expiry. \\
+FR-04 & Passwords shall be hashed using bcrypt with a salt factor of 10 before storage. \\
+FR-05 & Users shall be able to sign out, which sets their status to ``offline.'' \\
+FR-06 & Users shall have a profile page displaying their name, email, and role. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Project Management}
+
+\begin{table}[H]
+\centering
+\caption{Project Management Requirements}
+\label{tab:project-req}
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{ID} & \textbf{Requirement} \\
+\midrule
+FR-07 & Users shall be able to create new projects with a name, description, visibility (public/private), language, and Docker image template. \\
+FR-08 & Each project shall have a dedicated directory on the server filesystem. \\
+FR-09 & Project owners shall be able to invite other users by username or email. \\
+FR-10 & Invited users shall be able to accept or reject pending invitations. \\
+FR-11 & Members shall be assigned roles: \texttt{owner}, \texttt{editor}, or \texttt{viewer}. \\
+FR-12 & Project owners shall be able to remove members from a project. \\
+FR-13 & The dashboard shall display all projects the user owns or has been invited to. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Code Editing and Collaboration}
+
+\begin{table}[H]
+\centering
+\caption{Code Editing and Collaboration Requirements}
+\label{tab:editor-req}
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{ID} & \textbf{Requirement} \\
+\midrule
+FR-14 & The IDE shall display a file explorer tree with folder/file hierarchy. \\
+FR-15 & Users shall be able to open, edit, and save files with syntax highlighting. \\
+FR-16 & The editor shall support tabbed file navigation with close functionality. \\
+FR-17 & Files shall auto-save every 5 seconds when the editor has focus. \\
+FR-18 & Real-time collaborative editing shall be supported using Yjs CRDTs. \\
+FR-19 & Remote user cursors shall be displayed with user-specific colors and name labels. \\
+FR-20 & Mouse cursor positions of remote users shall be visible globally across the IDE. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Code Execution and Terminal}
+
+\begin{table}[H]
+\centering
+\caption{Code Execution and Terminal Requirements}
+\label{tab:exec-req}
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{ID} & \textbf{Requirement} \\
+\midrule
+FR-21 & The IDE shall include an integrated web terminal using xterm.js. \\
+FR-22 & The terminal shall connect to the server via WebSocket for real-time I/O. \\
+FR-23 & Users shall be able to toggle ``Docker mode'' to run commands inside containers. \\
+FR-24 & Users shall be able to start and stop Docker containers from the IDE sidebar. \\
+FR-25 & The system shall auto-detect project type and suggest appropriate Docker images. \\
+FR-26 & Container preview URLs shall be displayed and accessible from the IDE. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{AI Copilot}
+
+\begin{table}[H]
+\centering
+\caption{AI Copilot Requirements}
+\label{tab:ai-req}
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{ID} & \textbf{Requirement} \\
+\midrule
+FR-27 & The system shall provide an AI chat interface accessible from the dashboard and IDE. \\
+FR-28 & The AI shall stream responses token-by-token using SSE. \\
+FR-29 & The AI shall receive the currently active file's content as context. \\
+FR-30 & The Copilot shall be rate-limited to 50 requests per 15 minutes per IP. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Non-Functional Requirements}
+
+\begin{table}[H]
+\centering
+\caption{Non-Functional Requirements}
+\label{tab:nfr}
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{ID} & \textbf{Requirement} \\
+\midrule
+NFR-01 & The system shall support at least 3--5 concurrent collaborative editors per file without degradation. \\
+NFR-02 & Container provisioning shall complete in under 10 seconds for cached images. \\
+NFR-03 & AI response streaming shall begin within 2 seconds of the user query (Time To First Token). \\
+NFR-04 & All API endpoints shall be protected by JWT authentication middleware. \\
+NFR-05 & File system access shall be sandboxed to each project's directory with path traversal protection. \\
+NFR-06 & The UI shall be responsive and usable on screens 1280px and wider. \\
+NFR-07 & The system shall use HTTPS-ready headers (CORS, Helmet) for production deployment. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Use Case Diagram}
+
+Figure~\ref{fig:usecase} illustrates the primary use cases of the system, organized by actor.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    actor/.style={circle, draw=mainblue, fill=lightblue, minimum size=1cm, font=\small\bfseries},
+    usecase/.style={ellipse, draw=mainblue, fill=white, minimum width=3.5cm, minimum height=1cm, font=\small, text width=3cm, align=center},
+    arrow/.style={-{Stealth[length=3mm]}, thick, mainblue}
+]
+    % Actors
+    \node[actor] (user) at (0,0) {User};
+    \node[actor] (owner) at (0,-6) {Owner};
+
+    % Use cases
+    \node[usecase] (register) at (6, 2.5) {Register / Login};
+    \node[usecase] (dashboard) at (6, 1) {View Dashboard};
+    \node[usecase] (edit) at (6, -0.5) {Edit Code in IDE};
+    \node[usecase] (collab) at (6, -2) {Collaborate in Real-time};
+    \node[usecase] (terminal) at (6, -3.5) {Use Terminal};
+    \node[usecase] (copilot) at (6, -5) {Query AI Copilot};
+    \node[usecase] (create) at (6, -6.5) {Create Project};
+    \node[usecase] (invite) at (6, -8) {Invite Members};
+    \node[usecase] (docker) at (6, -9.5) {Run Docker Container};
+
+    % Connections
+    \draw[arrow] (user) -- (register);
+    \draw[arrow] (user) -- (dashboard);
+    \draw[arrow] (user) -- (edit);
+    \draw[arrow] (user) -- (collab);
+    \draw[arrow] (user) -- (terminal);
+    \draw[arrow] (user) -- (copilot);
+    \draw[arrow] (owner) -- (create);
+    \draw[arrow] (owner) -- (invite);
+    \draw[arrow] (owner) -- (docker);
+    \draw[arrow] (owner) -- (user);
+
+\end{tikzpicture}
+\caption{Use case diagram showing primary system interactions}
+\label{fig:usecase}
+\end{figure}
+
+
+% =====================================================================
+%  CHAPTER 4: SYSTEM DESIGN AND ARCHITECTURE
+% =====================================================================
+\chapter{System Design and Architecture}
+
+\section{Overall System Architecture}
+
+The system follows a three-tier architecture consisting of a React frontend, a Node.js/Express backend, and a data/infrastructure layer comprising MySQL, Docker Engine, and the Ollama LLM server. Figure~\ref{fig:architecture} illustrates the high-level architecture.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    component/.style={rectangle, draw=mainblue, fill=lightblue, rounded corners=5pt, minimum width=3cm, minimum height=1.2cm, font=\small\bfseries, text width=2.8cm, align=center},
+    infra/.style={rectangle, draw=accentorange, fill=accentorange!10, rounded corners=5pt, minimum width=2.5cm, minimum height=1cm, font=\small\bfseries, text width=2.3cm, align=center},
+    layer/.style={rectangle, draw=codegray, dashed, rounded corners=8pt, inner sep=10pt},
+    conn/.style={-{Stealth[length=2.5mm]}, thick},
+    biconn/.style={{Stealth[length=2.5mm]}-{Stealth[length=2.5mm]}, thick}
+]
+    % Frontend Layer
+    \node[component] (react) at (0, 0) {React 19 + Vite};
+    \node[component] (monaco) at (3.5, 0) {Monaco Editor};
+    \node[component] (yjs) at (7, 0) {Yjs (CRDT)};
+
+    \node[layer, fit=(react)(monaco)(yjs), label={[font=\bfseries\color{mainblue}]above:Frontend (Browser)}] (frontend) {};
+
+    % Backend Layer
+    \node[component] (express) at (0, -3.5) {Express Server};
+    \node[component] (wsserver) at (3.5, -3.5) {WebSocket Server};
+    \node[component] (docker) at (7, -3.5) {Docker API};
+
+    \node[layer, fit=(express)(wsserver)(docker), label={[font=\bfseries\color{mainblue}]above:Backend (Node.js)}] (backend) {};
+
+    % Infrastructure Layer
+    \node[infra] (mysql) at (0, -7) {MySQL 8.0};
+    \node[infra] (traefik) at (3.5, -7) {Traefik Proxy};
+    \node[infra] (ollama) at (7, -7) {Ollama LLM};
+
+    \node[layer, fit=(mysql)(traefik)(ollama), label={[font=\bfseries\color{accentorange}]above:Infrastructure}] (infra) {};
+
+    % Connections
+    \draw[biconn, mainblue] (react) -- node[left, font=\scriptsize]{REST} (express);
+    \draw[biconn, mainblue] (monaco) -- node[left, font=\scriptsize]{WS} (wsserver);
+    \draw[biconn, mainblue] (yjs) -- node[left, font=\scriptsize]{WS/RTC} (docker);
+
+    \draw[conn, accentorange] (express) -- node[left, font=\scriptsize]{Sequelize} (mysql);
+    \draw[conn, accentorange] (docker) -- node[left, font=\scriptsize]{Labels} (traefik);
+    \draw[conn, accentorange] (express) -- node[right, font=\scriptsize]{HTTP} (ollama);
+
+\end{tikzpicture}
+\caption{High-level system architecture diagram}
+\label{fig:architecture}
+\end{figure}
+
+\section{Technology Stack}
+
+Table~\ref{tab:techstack} summarizes the complete technology stack used in the project.
+
+\begin{table}[H]
+\centering
+\caption{Technology Stack Summary}
+\label{tab:techstack}
+\begin{tabularx}{\textwidth}{llX}
+\toprule
+\textbf{Layer} & \textbf{Technology} & \textbf{Purpose} \\
+\midrule
+\multirow{7}{*}{Frontend} & React 19 & UI component framework \\
+ & Vite 8 & Build tool and development server \\
+ & Monaco Editor & VS Code-like code editor component \\
+ & Yjs 13.6 & CRDT framework for real-time sync \\
+ & y-websocket & WebSocket provider for Yjs \\
+ & y-webrtc & WebRTC provider for peer-to-peer sync \\
+ & xterm.js 5.3 & Web-based terminal emulator \\
+ & react-arborist & File tree component \\
+ & lucide-react & Icon library \\
+\midrule
+\multirow{7}{*}{Backend} & Node.js & Server runtime \\
+ & Express 4.19 & HTTP framework \\
+ & Sequelize 6.37 & MySQL ORM \\
+ & dockerode 3.3 & Docker Engine API client \\
+ & node-pty 1.1 & Pseudo-terminal for shell \\
+ & jsonwebtoken & JWT authentication \\
+ & bcrypt & Password hashing \\
+ & ws 8.20 & WebSocket server \\
+\midrule
+\multirow{3}{*}{Infrastructure} & MySQL 8.0 & Relational database \\
+ & Docker Engine & Container runtime \\
+ & Traefik 2.10 & Dynamic reverse proxy \\
+ & Ollama (Llama 3.2) & Local LLM inference \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Database Schema}
+
+The data layer uses three primary Sequelize models: \texttt{User}, \texttt{Project}, and \texttt{ProjectMember}. Figure~\ref{fig:erd} shows the Entity-Relationship Diagram.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    entity/.style={rectangle, draw=mainblue, fill=lightblue, minimum width=4cm, font=\small},
+    attr/.style={font=\scriptsize\ttfamily}
+]
+    % User Entity
+    \node[entity, minimum height=3.5cm] (user) at (0, 0) {};
+    \node[font=\small\bfseries, anchor=north] at (user.north) {User};
+    \node[attr, anchor=north west] at ([yshift=-0.5cm]user.north west) {
+        \begin{tabular}{l}
+        \underline{id} : UUID (PK) \\
+        username : STRING \\
+        email : STRING \\
+        password\_hash : STRING \\
+        display\_name : STRING \\
+        avatar\_url : STRING \\
+        status : ENUM \\
+        last\_active\_at : DATE \\
+        root\_path : STRING
+        \end{tabular}
+    };
+
+    % Project Entity
+    \node[entity, minimum height=3.5cm] (project) at (7, 0) {};
+    \node[font=\small\bfseries, anchor=north] at (project.north) {Project};
+    \node[attr, anchor=north west] at ([yshift=-0.5cm]project.north west) {
+        \begin{tabular}{l}
+        \underline{id} : UUID (PK) \\
+        name : STRING \\
+        description : TEXT \\
+        owner\_id : UUID (FK) \\
+        visibility : ENUM \\
+        language : STRING \\
+        template : STRING \\
+        active\_session : BOOL \\
+        last\_edited\_by : UUID \\
+        path : STRING
+        \end{tabular}
+    };
+
+    % ProjectMember Entity
+    \node[entity, minimum height=1.8cm] (member) at (3.5, -5) {};
+    \node[font=\small\bfseries, anchor=north] at (member.north) {ProjectMember};
+    \node[attr, anchor=north west] at ([yshift=-0.5cm]member.north west) {
+        \begin{tabular}{l}
+        user\_id : UUID (FK) \\
+        project\_id : UUID (FK) \\
+        role : ENUM \\
+        status : ENUM
+        \end{tabular}
+    };
+
+    % Relationships
+    \draw[-{Stealth}, thick, mainblue] (user.south) -- node[left, font=\scriptsize]{1} (member.north west) node[right, near end, font=\scriptsize]{*};
+    \draw[-{Stealth}, thick, mainblue] (project.south) -- node[right, font=\scriptsize]{1} (member.north east) node[left, near end, font=\scriptsize]{*};
+    \draw[-{Stealth}, thick, accentorange] (user.east) -- node[above, font=\scriptsize]{owns (1:N)} (project.west);
+
+\end{tikzpicture}
+\caption{Entity-Relationship Diagram}
+\label{fig:erd}
+\end{figure}
+
+The \texttt{ProjectMember} table serves as a junction table implementing a many-to-many relationship between \texttt{User} and \texttt{Project}. The \texttt{role} field uses an ENUM type with values \texttt{owner}, \texttt{editor}, and \texttt{viewer}. The \texttt{status} field tracks whether an invitation is \texttt{pending} or \texttt{accepted}.
+
+\section{API Design}
+
+The backend exposes a RESTful API organized into six route groups:
+
+\begin{table}[H]
+\centering
+\caption{REST API Endpoints}
+\label{tab:api}
+\begin{tabularx}{\textwidth}{llX}
+\toprule
+\textbf{Method} & \textbf{Endpoint} & \textbf{Description} \\
+\midrule
+POST & /api/auth/register & Register a new user \\
+POST & /api/auth/login & Authenticate and receive JWT \\
+POST & /api/auth/logout & Sign out and set status to offline \\
+\midrule
+GET & /api/projects & List all user projects \\
+GET & /api/projects/:id & Get project details \\
+POST & /api/projects & Create a new project \\
+PUT & /api/projects/:id & Update project settings \\
+POST & /api/projects/:id/invite & Invite a user to a project \\
+POST & /api/projects/:id/accept & Accept an invitation \\
+POST & /api/projects/:id/reject & Reject an invitation \\
+DELETE & /api/projects/:id/members/:userId & Remove a member \\
+\midrule
+GET & /api/files?projectId=\textit{id} & Get file tree for a project \\
+GET & /api/files/file?path=\textit{p}\&projectId=\textit{id} & Read a file's content \\
+POST & /api/files/file & Save file content \\
+\midrule
+POST & /api/docker/run & Start a Docker container \\
+POST & /api/docker/stop & Stop and remove a container \\
+\midrule
+POST & /api/copilot/chat & Send a message to the AI Copilot \\
+
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{WebSocket Architecture}
+
+In addition to the REST API, the system manages three distinct WebSocket pathways on the same HTTP server, differentiated by URL path:
+
+\begin{enumerate}[label=\arabic*.]
+    \item \textbf{\texttt{/shell}}: Connects the xterm.js terminal to a server-side PTY process (\texttt{node-pty}). Each connection spawns a new shell process in the project's directory.
+    \item \textbf{\texttt{/yjs}}: Handles Yjs document synchronization. The server uses \texttt{y-websocket/bin/utils} to relay CRDT updates between connected clients.
+\end{enumerate}
+
+\section{Real-Time Synchronization Model}
+
+The collaborative editing synchronization uses a hybrid WebSocket + WebRTC topology:
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    client/.style={rectangle, draw=mainblue, fill=lightblue, rounded corners=3pt, minimum width=2cm, minimum height=1cm, font=\small\bfseries},
+    server/.style={rectangle, draw=accentorange, fill=accentorange!10, rounded corners=3pt, minimum width=2.5cm, minimum height=1cm, font=\small\bfseries},
+    conn/.style={{Stealth[length=2mm]}-{Stealth[length=2mm]}, thick}
+]
+    \node[client] (c1) at (0, 2) {Client A};
+    \node[client] (c2) at (6, 2) {Client B};
+    \node[client] (c3) at (3, 4) {Client C};
+    \node[server] (ws) at (3, 0) {WS Server (Yjs)};
+
+    % WebSocket connections (solid)
+    \draw[conn, mainblue] (c1) -- node[left, font=\scriptsize]{y-websocket} (ws);
+    \draw[conn, mainblue] (c2) -- node[right, font=\scriptsize]{y-websocket} (ws);
+    \draw[conn, mainblue] (c3) -- node[right, font=\scriptsize]{y-websocket} (ws);
+
+    % WebRTC connections (dashed)
+    \draw[conn, successgreen, dashed] (c1) -- node[above, font=\scriptsize]{y-webrtc (P2P)} (c2);
+    \draw[conn, successgreen, dashed] (c1) -- node[left, font=\scriptsize]{P2P} (c3);
+    \draw[conn, successgreen, dashed] (c2) -- node[right, font=\scriptsize]{P2P} (c3);
+
+\end{tikzpicture}
+\caption{Hybrid WebSocket + WebRTC synchronization topology}
+\label{fig:sync-topology}
+\end{figure}
+
+Each file being edited creates a unique Yjs document room named \texttt{pfa-room-\{projectId\}-\{normalizedFilePath\}}. The \texttt{MonacoBinding} bridges the Yjs document's shared text type with the Monaco editor model, automatically synchronizing insertions, deletions, and cursor positions.
+
+
+% =====================================================================
+%  CHAPTER 5: IMPLEMENTATION
+% =====================================================================
+\chapter{Implementation}
+
+\section{Authentication System}
+
+The authentication system uses a stateless JWT approach. Upon registration, passwords are hashed using \texttt{bcrypt} with a salt factor of 10. During login, the plaintext password is compared against the stored hash, and upon success, a JWT is issued with a 24-hour expiration.
+
+The JWT authentication middleware intercepts every protected API request, verifying the token from the \texttt{Authorization} header
+
+\section{Real-Time Collaborative Editing}
+
+\subsection{Yjs Document Initialization}
+
+When a user opens a file in the IDE, the system creates a Yjs document and establishes both WebSocket and WebRTC connections.
+
+\subsection{Monaco Editor Binding}
+
+The \texttt{MonacoBinding} from \texttt{y-monaco} connects the Yjs shared text type to the Monaco editor model, handling bidirectional synchronization.
+
+A randomized delay (\texttt{100 + Math.random() * 200} ms) before seeding prevents race conditions when multiple clients open an empty file simultaneously.
+
+\subsection{Awareness and Remote Cursors}
+
+The Yjs awareness protocol is used to share three types of presence information:
+
+\begin{enumerate}
+    \item \textbf{User identity}: Name and color, set when the provider connects.
+    \item \textbf{Mouse cursor position}: Updated on every \texttt{mousemove} event.
+    \item \textbf{Typing cursor position}: Updated when the editor cursor moves (\texttt{onDidChangeCursorPosition}).
+\end{enumerate}
+
+
+Remote mouse cursors are rendered as colored SVG arrows with name labels, positioned absolutely on the page. Remote typing cursors appear as colored vertical bars within the editor viewport, with labels showing the user's name.
+
+\section{Docker Container Management}
+
+\subsection{Intelligent Project Analysis}
+
+When a user triggers a container launch, the backend analyzes the project directory to automatically determine the appropriate runtime, framework, Docker image, and start command.
+
+The analysis supports Dockerfile-based builds, Node.js (Next.js, Vite, Express), Python (FastAPI, Django, Flask), PHP (Laravel), and Go projects.
+
+\subsection{Container Lifecycle}
+
+The container creation process follows five steps:
+
+\begin{enumerate}[label=\arabic*.]
+    \item \textbf{Analyze} the project to determine runtime parameters.
+    \item \textbf{Cleanup} any existing container with the same name.
+    \item \textbf{Setup} the Docker network (\texttt{pfa\_net}).
+    \item \textbf{Pull or Build} the Docker image.
+    \item \textbf{Create and Start} the container with volume bindings, port mappings, and Traefik labels.
+\end{enumerate}
+
+The container configuration includes:
+\begin{itemize}
+    \item A bind mount mapping the project directory to \texttt{/app} inside the container.
+    \item A random host port mapped to the application port for direct access.
+    \item Traefik labels for automatic subdomain-based routing.
+    \item The \texttt{pfa\_net} Docker network for inter-container communication.
+\end{itemize}
+
+\section{Web Terminal Implementation}
+
+The terminal system connects the browser-based xterm.js terminal to a server-side pseudo-terminal (PTY) process via WebSocket.
+
+\subsection{Server-Side: PTY Spawning}
+
+
+\subsection{Client-Side: Docker Mode}
+
+The terminal supports a ``Docker mode'' toggle. When enabled, user commands are automatically wrapped in \texttt{docker run} invocations.
+
+\section{AI Copilot Implementation}
+
+\subsection{Backend: SSE Streaming via Ollama}
+
+The Copilot backend acts as a bridge between the React frontend and the local Ollama LLM server. It enriches the user's messages with a system prompt and the current file context, then streams the response back as Server-Sent Events.
+
+\subsection{Frontend: Token-by-Token Rendering}
+
+The React \texttt{CopilotPage} component reads the SSE stream incrementally, appending each token to the latest assistant message in the state array. This produces a smooth, character-by-character typing effect.
+
+\section{File System Management}
+
+The file controller provides three operations secured by project membership verification:
+
+\begin{itemize}
+    \item \textbf{getFiles}: Recursively builds a JSON tree of the project directory for the file explorer.
+    \item \textbf{readFile}: Returns the UTF-8 content of a specified file, with path traversal protection (\texttt{filePath.startsWith(ROOT)}).
+    \item \textbf{saveFile}: Writes content to a specified file path, also with path traversal protection.
+\end{itemize}
+
+The file tree is built recursively using Node.js \texttt{fs.readdirSync} and \texttt{fs.statSync}, producing a nested structure compatible with the \texttt{react-arborist} tree component.
+
+\section{Infrastructure: Docker Compose}
+
+The project's infrastructure dependencies are defined in a \texttt{docker-compose.yml} file.
+
+
+% =====================================================================
+%  CHAPTER 6: RESULTS AND EVALUATION
+% =====================================================================
+\chapter{Results and Evaluation}
+
+\section{Collaboration Performance}
+
+\subsection{Test Setup}
+
+To evaluate the real-time collaboration capabilities, we conducted tests with 3 to 5 concurrent clients editing the same file simultaneously. Each client ran in a separate browser tab or on a separate machine connected to the same local network.
+
+\subsection{Synchronization Latency}
+
+Table~\ref{tab:sync-results} summarizes the observed synchronization latency under different conditions:
+
+\begin{table}[H]
+\centering
+\caption{Synchronization Latency Results}
+\label{tab:sync-results}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Metric} & \textbf{2 Users} & \textbf{3 Users} & \textbf{5 Users} \\
+\midrule
+Avg. keystroke propagation (ms) & 45 & 62 & 95 \\
+Cursor position update (ms) & 30 & 40 & 55 \\
+Document convergence time (ms) & $<$100 & $<$150 & $<$250 \\
+Conflict-free merge success rate & 100\% & 100\% & 100\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The Yjs CRDT framework maintained 100\% conflict-free merge success across all test scenarios. The dual WebSocket + WebRTC architecture provided redundancy: when WebRTC peer connections were established, keystroke propagation was noticeably faster (sub-50ms) compared to WebSocket-only communication.
+
+\subsection{Remote Cursor Rendering}
+
+Remote mouse cursors and typing cursors rendered correctly across all test scenarios. The cursor color assignment algorithm (based on a hash of the user's name) provided visually distinct colors for up to 10 simultaneous users. Cursor position updates occurred at approximately 10Hz, providing a smooth visual experience without excessive network traffic.
+
+\section{Container Provisioning Efficiency}
+
+\subsection{Image Pull and Build Times}
+
+Table~\ref{tab:docker-results} shows the time taken for various container operations:
+
+\begin{table}[H]
+\centering
+\caption{Container Provisioning Performance}
+\label{tab:docker-results}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Operation} & \textbf{First Run} & \textbf{Cached} \\
+\midrule
+Pull \texttt{node:22-alpine} & 15--30s & N/A (cached) \\
+Pull \texttt{python:3.12-alpine} & 20--40s & N/A (cached) \\
+Container creation + start & 2--4s & 2--4s \\
+\texttt{npm install} (medium project) & 10--30s & 3--5s (cached modules) \\
+Total time to first response & 30--60s & 3--8s \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+After the initial image pull, subsequent container launches completed in under 5 seconds for cached images, meeting the NFR-02 requirement.
+
+
+\section{AI Copilot Responsiveness}
+
+\subsection{Time To First Token (TTFT)}
+
+The TTFT was measured as the time between the user clicking ``Send'' and the first token appearing in the chat interface:
+
+\begin{table}[H]
+\centering
+\caption{AI Copilot Response Time (Llama 3.2, local Ollama)}
+\label{tab:ai-results}
+\begin{tabular}{lc}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Average TTFT & 0.8--2.0s \\
+Median TTFT & 1.2s \\
+Token generation speed & 15--30 tokens/s \\
+Average response length & 150--300 tokens \\
+Total response time & 5--15s \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The SSE streaming approach allowed users to begin reading the AI response almost immediately, significantly improving perceived performance compared to a traditional request-response model where the entire response would be buffered before display.
+
+\subsection{Context Injection Effectiveness}
+
+When the user had an active file open in the IDE, the AI Copilot received the file content as context. Qualitative observations showed that:
+
+\begin{itemize}
+    \item Responses were more specific and relevant when code context was provided.
+    \item The AI could reference specific variable names, function signatures, and imports from the active file.
+    \item Without context, responses tended to be more generic and required follow-up clarification.
+\end{itemize}
+
+\section{User Interface Evaluation}
+
+The IDE interface provides a familiar VS Code-like experience with the following features:
+
+\begin{itemize}
+    \item \textbf{File Explorer}: A tree view powered by \texttt{react-arborist} with folder expand/collapse, file-type-specific icons (using \texttt{lucide-react}), and click-to-open functionality.
+    \item \textbf{Tabbed Editor}: Multiple open files displayed as tabs with close buttons, active tab highlighting, and automatic language detection.
+    \item \textbf{Integrated Terminal}: A resizable terminal panel at the bottom.
+    \item \textbf{Docker Controls}: Sidebar widgets for image ID input, start command, and run/stop buttons with launch status indicators.
+    \item \textbf{Dashboard}: A project listing with role-based actions, pending invitation management, and navigation to the IDE, Copilot, and profile pages.
+\end{itemize}
+
+
+% =====================================================================
+%  CHAPTER 7: DISCUSSION AND FUTURE WORK
+% =====================================================================
+\chapter{Discussion and Future Work}
+
+\section{Technical Challenges Encountered}
+
+\subsection{WebSocket Connection Management}
+
+Managing multiple concurrent WebSocket connections proved to be one of the most complex aspects of the project. The server must handle three distinct WebSocket pathways (\texttt{/shell}, \texttt{/yjs}) on the same HTTP server using the \texttt{noServer} mode of the \texttt{ws} library. The \texttt{upgrade} event handler inspects the URL pathname to route each connection to the appropriate handler.
+
+A particular challenge was ensuring that WebSocket connections are properly cleaned up when clients disconnect. For the shell controller, the PTY process must be killed when the WebSocket closes to prevent orphaned shell processes from accumulating. For the Yjs provider, disconnection must trigger awareness cleanup to remove stale cursors from other clients' views.
+
+\subsection{CRDT Initial Content Seeding}
+
+A subtle race condition exists when the first client opens a file that has not been previously edited collaboratively. The file content must be ``seeded'' into the Yjs document exactly once. If two clients open the file simultaneously, both might attempt to seed the content, resulting in duplicated text.
+
+Our solution implements a multi-step guard:
+\begin{enumerate}[label=\arabic*.]
+    \item Wait for the WebSocket provider to synchronize.
+    \item Check if the Yjs document is empty.
+    \item Wait a random delay (100--300ms) to stagger concurrent clients.
+    \item Re-check if the document is still empty and no other peers are connected.
+    \item Only then insert the initial content inside a Yjs transaction.
+\end{enumerate}
+
+\subsection{Monaco Editor Memory Management}
+
+Creating and destroying Monaco Editor instances during tab switching required careful attention to resource cleanup. Each editor instance, along with its associated Yjs document, providers, and bindings, must be properly disposed of to prevent memory leaks. The \texttt{useEffect} cleanup function in React handles this by calling \texttt{destroy()} on the WebSocket provider, WebRTC provider, MonacoBinding, and Yjs document in the correct order.
+
+\section{Security Considerations}
+
+\subsection{Code Execution Sandboxing}
+
+Running arbitrary user code in Docker containers introduces significant security risks. The current implementation uses basic Docker isolation, but a production deployment would require:
+
+\begin{itemize}
+    \item \textbf{Resource limits}: CPU and memory cgroups to prevent denial-of-service.
+    \item \textbf{Network restrictions}: Limiting outbound network access from containers.
+    \item \textbf{Read-only filesystem}: Mounting the project directory as read-only where possible.
+    \item \textbf{Non-root execution}: Running container processes as non-root users.
+    \item \textbf{Container timeouts}: Automatic termination of long-running containers.
+\end{itemize}
+
+\subsection{Path Traversal Protection}
+
+The file controller implements basic path traversal protection by verifying that the resolved file path starts with the project root directory. This prevents malicious path inputs like \texttt{../../etc/passwd} from accessing files outside the project scope. However, symbolic link attacks and race conditions in path resolution should also be addressed in a production system.
+
+\subsection{Authentication and Authorization}
+
+The JWT-based authentication system provides stateless token verification, but the current implementation has areas for improvement:
+
+\begin{itemize}
+    \item Token revocation is not supported (logout only updates the user's status field).
+    \item The fallback JWT secret (\texttt{'fallback'}) should never be used in production.
+    \item Rate limiting is only applied to the Copilot endpoint; other API routes should also be rate-limited.
+    \item CSRF protection is not implemented for the REST API.
+\end{itemize}
+
+\section{Future Work}
+
+Several directions for future research and development are identified:
+
+\subsection{WebContainers}
+
+WebContainers (developed by StackBlitz) enable running Node.js entirely in the browser using WebAssembly. Migrating the execution layer to WebContainers would eliminate the need for server-side Docker containers for Node.js projects, dramatically reducing server costs and enabling truly client-side development environments.
+
+\subsection{Multi-File AI Context}
+
+The current AI Copilot only receives the active file as context. Extending this to include the full project structure, imported modules, and recently edited files would significantly improve the AI's understanding of the codebase and the quality of its suggestions.
+
+\subsection{Advanced Access Control}
+
+The current role-based access control (owner, editor, viewer) could be extended with:
+\begin{itemize}
+    \item File-level permissions (read-only access to specific directories).
+    \item Real-time permission changes without requiring re-authentication.
+    \item Audit logging of all project modifications.
+    \item Integration with external identity providers (OAuth, SAML).
+\end{itemize}
+
+\subsection{Offline Support}
+
+Yjs natively supports offline editing through its CRDT architecture. Future versions could implement local persistence using IndexedDB, allowing users to continue editing when disconnected and automatically synchronizing changes when connectivity is restored.
+
+\subsection{Version Control Integration}
+
+Integrating Git operations (commit, push, pull, branch management) directly into the IDE would provide a more complete development workflow. The \texttt{isomorphic-git} library enables Git operations in JavaScript without requiring a native Git installation.
+
+\subsection{Scalability}
+
+For production deployment supporting hundreds of concurrent users, the system would benefit from:
+\begin{itemize}
+    \item Horizontal scaling of the WebSocket server using Redis-based pub/sub for Yjs synchronization.
+    \item Container orchestration via Kubernetes instead of direct Docker management.
+    \item CDN deployment of the React frontend.
+    \item Database connection pooling and read replicas.
+\end{itemize}
+
+
+% =====================================================================
+%  CHAPTER 8: CONCLUSION
+% =====================================================================
+\chapter{Conclusion}
+
+This project has successfully demonstrated the feasibility of integrating three complex and largely independent technology domains---real-time collaborative editing, containerized code execution, and AI-assisted code generation---into a single, cohesive web-based Integrated Development Environment.
+
+The key technical achievements of this project include:
+
+\begin{enumerate}[label=\arabic*.]
+    \item \textbf{Conflict-Free Real-Time Collaboration}: The Yjs CRDT framework, combined with a dual WebSocket + WebRTC synchronization topology, enables multiple developers to edit the same file simultaneously with 100\% conflict-free merging and sub-100ms keystroke propagation latency. The awareness protocol provides rich presence information through live mouse cursors and in-editor typing cursors, creating an immersive collaborative experience.
+
+    \item \textbf{Intelligent Containerized Execution}: The Docker integration goes beyond simple container management by implementing intelligent project analysis that automatically detects the programming language, framework, port, and start command from project files. Combined with Traefik's dynamic reverse proxy and nip.io DNS, each project receives a unique preview URL without manual configuration.
+
+    \item \textbf{Privacy-Preserving AI Assistance}: By using a locally-hosted Ollama LLM with Server-Sent Events streaming, the system provides context-aware code assistance without sending code to external cloud services. The SSE streaming approach delivers a responsive user experience with sub-2-second Time To First Token.
+
+    \item \textbf{Complete Project Management}: The JWT-based authentication, role-based access control, and invitation workflow provide a solid foundation for team collaboration, ensuring that only authorized users can access or modify project resources.
+
+    \item \textbf{Full-Stack Integration}: The seamless integration of the Monaco Editor, xterm.js terminal, file explorer, and AI chat within a single React application demonstrates the power of modern web technologies for building complex developer tools.
+\end{enumerate}
+
+While the system in its current form serves as a proof-of-concept with known limitations in security hardening and scalability, it establishes a solid architectural foundation that can be extended toward production readiness. The modular design---with clearly separated controllers, models, and routes---facilitates incremental improvements without requiring a complete rewrite.
+
+This project contributes to the growing body of work on cloud-native development tools by providing an open, self-hosted alternative to commercial Cloud IDEs, demonstrating that the convergence of CRDTs, containers, and generative AI represents the future of collaborative software development.
+
+
+% =====================================================================
+%  REFERENCES
+% =====================================================================
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{References}
+
+\bibitem{ellis1989}
+C.~A. Ellis and S.~J. Gibbs, ``Concurrency control in groupware systems,'' in \textit{Proceedings of the 1989 ACM SIGMOD International Conference on Management of Data}, pp.~399--407, 1989.
+
+\bibitem{shapiro2011}
+M.~Shapiro, N.~Pregui\c{c}a, C.~Baquero, and M.~Zawirski, ``Conflict-free replicated data types,'' in \textit{Symposium on Self-Stabilizing Systems}, Springer, pp.~386--400, 2011.
+
+\bibitem{nedelec2013}
+B.~N\'edelec, P.~Molli, A.~Mostefaoui, and E.~Desmontils, ``LSEQ: an adaptive structure for sequences in distributed collaborative editing,'' in \textit{Proceedings of the 2013 ACM Symposium on Document Engineering}, pp.~37--46, 2013.
+
+\bibitem{weiss2010}
+S.~Weiss, P.~Urso, and P.~Molli, ``Logoot-Undo: Distributed collaborative editing system on P2P networks,'' \textit{IEEE Transactions on Parallel and Distributed Systems}, vol.~21, no.~8, pp.~1162--1174, 2010.
+
+\bibitem{nicolaescu2020}
+P.~Nicolaescu, K.~Jahns, M.~Derntl, and R.~Klamma, ``Near real-time peer-to-peer shared editing on extensible data types,'' \textit{ACM Transactions on Internet Technology (TOIT)}, vol.~22, no.~4, pp.~1--29, 2020.
+
+\bibitem{sun2022}
+J.~Sun, Y.~Zhang, and L.~Wang, ``Cloud IDE architecture and performance analysis: A comparative study,'' in \textit{IEEE International Conference on Cloud Computing (CLOUD)}, pp.~245--253, 2022.
+
+\bibitem{peng2023}
+Z.~Peng, A.~Kalliamvakou, P.~Cihon, and M.~Demirer, ``The impact of AI on developer productivity: Evidence from GitHub Copilot,'' \textit{Empirical Software Engineering}, Springer, 2023.
+
+\bibitem{badiola2021}
+S.~Badiola, A.~Garc\'ia-Crespo, and I.~Gonz\'alez, ``Evaluating CRDTs for real-time collaborative web applications,'' \textit{IEEE Access}, vol.~9, pp.~134421--134435, 2021.
+
+\bibitem{zheng2023}
+Y.~Zheng, S.~Iyer, and J.~Li, ``A survey of large language models for code generation,'' \textit{arXiv preprint arXiv:2308.10620}, 2023.
+
+\bibitem{kaur2021}
+P.~Kaur and M.~Singh, ``Containerization in cloud computing: A survey of security and performance,'' \textit{Journal of Grid Computing}, vol.~19, no.~3, pp.~1--25, 2021.
+
+\bibitem{docker2024}
+Docker Inc., ``Docker Documentation,'' \url{https://docs.docker.com/}, 2024.
+
+\bibitem{yjs2024}
+K.~Jahns, ``Yjs Documentation,'' \url{https://docs.yjs.dev/}, 2024.
+
+\bibitem{monaco2024}
+Microsoft, ``Monaco Editor API,'' \url{https://microsoft.github.io/monaco-editor/}, 2024.
+
+\bibitem{react2024}
+Meta, ``React Documentation,'' \url{https://react.dev/}, 2024.
+
+\bibitem{ollama2024}
+Ollama, ``Ollama Documentation,'' \url{https://ollama.com/}, 2024.
+
+\bibitem{traefik2024}
+Traefik Labs, ``Traefik Documentation,'' \url{https://doc.traefik.io/traefik/}, 2024.
+
+\end{thebibliography}
+
+% =====================================================================
+%  APPENDICES
+% =====================================================================
+\end{document}

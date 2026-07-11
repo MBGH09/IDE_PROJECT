@@ -1,0 +1,2 @@
+1-team leader gives the docker image id
+2-

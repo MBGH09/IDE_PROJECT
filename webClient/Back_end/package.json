@@ -1,0 +1,28 @@
+{
+  "name": "collaborative-webapp-backend",
+  "version": "1.0.0",
+  "description": "Backend for collaborative web app",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.6",
+    "dockerode": "^3.3.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.19.2",
+    "express-rate-limit": "^8.3.2",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.9.7",
+    "node-pty": "^1.1.0",
+    "openai": "^6.34.0",
+    "sequelize": "^6.37.3",
+    "uuid": "^9.0.1",
+    "ws": "^8.20.0",
+    "y-websocket": "^2.1.0"
+  }
+}

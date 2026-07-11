@@ -1,0 +1,2 @@
+cd /home/jawhar/Desktop/pfa2/testPFA/webClient/Back_end
+docker compose up -d
