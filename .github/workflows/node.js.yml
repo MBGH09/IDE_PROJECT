@@ -65,7 +65,6 @@ jobs:
   build-and-push:
     name: Build and Push Docker Images
     needs: [backend, frontend]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
