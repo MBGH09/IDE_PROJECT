@@ -61,3 +61,32 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  build-and-push:
+    name: Build and Push Docker Images
+    needs: [backend, frontend]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build & push backend image
+        uses: mr-smithers-excellent/docker-build-push@v7
+        with:
+          image: mbgh09/ide_project
+          tags: backend-latest, backend-${{ github.sha }}
+          registry: docker.io
+          directory: webClient/Back_end
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build & push frontend image
+        uses: mr-smithers-excellent/docker-build-push@v7
+        with:
+          image: mbgh09/ide_project
+          tags: frontend-latest, frontend-${{ github.sha }}
+          registry: docker.io
+          directory: webClient/pfa_front
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
