@@ -1,0 +1,144 @@
+# =============================================================================
+# Deploy Frontend (React/Vite) to GitHub Pages
+# =============================================================================
+#
+# CE WORKFLOW EST DIFFÉRENT DE node.js.yml :
+#
+#   node.js.yml  → Déploie TOUT le projet (frontend + backend + Docker)
+#                  sur votre VPS → https://collaborativeide.me
+#
+#   ce fichier   → Déploie SEULEMENT le frontend React (fichiers statiques)
+#                  sur GitHub Pages → https://mbgh09.github.io/IDE_PROJECT
+#                  (hébergement gratuit, utile pour prévisualisation / démonstration)
+#
+# PRÉREQUIS GITHUB :
+#   Repo → Settings → Pages → Source → choisir "GitHub Actions"
+#
+# =============================================================================
+
+name: Deploy Frontend to GitHub Pages
+
+on:
+  # Se déclenche sur chaque push vers la branche main
+  push:
+    branches: ["main"]
+
+  # Permet aussi de lancer manuellement depuis l'onglet "Actions" sur GitHub
+  workflow_dispatch:
+
+# ---------------------------------------------------------------------------
+# PERMISSIONS
+# "pages: write"    → autorisation d'écrire sur GitHub Pages
+# "id-token: write" → nécessaire pour l'authentification OIDC (sécurité)
+# "contents: read"  → lire le code du repo
+# ---------------------------------------------------------------------------
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# ---------------------------------------------------------------------------
+# CONCURRENCE
+# Un seul déploiement à la fois. Si un nouveau push arrive pendant qu'un
+# déploiement est en cours, le nouveau attend — il ne cancel pas l'actuel.
+# ---------------------------------------------------------------------------
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+# ===========================================================================
+# JOBS
+# ===========================================================================
+jobs:
+
+  # ---------------------------------------------------------------------------
+  # JOB 1 : build
+  # Construit le frontend React/Vite et prépare les fichiers pour GitHub Pages
+  # ---------------------------------------------------------------------------
+  build:
+    name: Build React/Vite Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      # Télécharge le code du repo sur la machine virtuelle GitHub
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Configure Node.js 22 avec cache npm pour accélérer les builds futurs
+      # Le cache est indexé sur webClient/pfa_front/package-lock.json :
+      # si les dépendances n'ont pas changé, npm ci est quasi-instantané
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: webClient/pfa_front/package-lock.json
+
+      # Configure GitHub Pages et injecte automatiquement le "base path"
+      # Le base path est nécessaire car votre app sera servie sous :
+      # https://mbgh09.github.io/IDE_PROJECT/ (et non à la racine /)
+      # Sans ça, les assets (JS, CSS, images) ne se chargent pas.
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      # Restaure le cache Vite (.vite/deps) pour accélérer les builds
+      # La clé change si package-lock.json OU les fichiers source changent
+      - name: Restore Vite build cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            webClient/pfa_front/node_modules/.vite
+          key: ${{ runner.os }}-vite-${{ hashFiles('webClient/pfa_front/package-lock.json') }}-${{ hashFiles('webClient/pfa_front/src/**') }}
+          restore-keys: |
+            ${{ runner.os }}-vite-${{ hashFiles('webClient/pfa_front/package-lock.json') }}-
+
+      # Installe les dépendances npm de manière stricte (depuis package-lock.json)
+      # "npm ci" = clean install, plus rapide et fiable que "npm install"
+      - name: Install dependencies
+        working-directory: webClient/pfa_front
+        run: npm ci
+
+      # Lance le build de production Vite
+      # Vite compile et optimise votre React app et génère le dossier "dist/"
+      # VITE_BASE_PATH est injecté par "Setup GitHub Pages" ci-dessus
+      - name: Build with Vite
+        working-directory: webClient/pfa_front
+        run: npm run build
+        env:
+          # La variable NODE_ENV=production active les optimisations React
+          NODE_ENV: production
+          # Indique à vite.config.js d'utiliser le base path /IDE_PROJECT/
+          # (nécessaire car GitHub Pages sert l'app sous /IDE_PROJECT/ et non /)
+          GITHUB_PAGES: 'true'
+
+
+      # Prend le dossier dist/ et le prépare comme artifact GitHub Pages
+      # C'est ce dossier qui sera publié sur mbgh09.github.io/IDE_PROJECT
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Vite génère les fichiers dans "dist/" (contrairement à Next.js qui utilise "out/")
+          path: webClient/pfa_front/dist
+
+  # ---------------------------------------------------------------------------
+  # JOB 2 : deploy
+  # Publie l'artifact buildé sur GitHub Pages
+  # Ce job attend que le job "build" soit terminé avec succès.
+  # ---------------------------------------------------------------------------
+  deploy:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: build   # attend la fin du job "build"
+
+    # L'environnement "github-pages" est un environnement spécial GitHub
+    # qui apparaît dans l'onglet "Environments" de votre repo
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}   # URL finale affichée dans GitHub
+
+    steps:
+      # Publie l'artifact sur GitHub Pages
+      # L'URL sera : https://mbgh09.github.io/IDE_PROJECT/
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
