@@ -1,0 +1,97 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: CI
+
+on:
+  push:
+    branches: [MBGH09-patch-1]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend (Express/Sequelize)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: webClient/Back_end
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: webClient/Back_end/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint (if configured)
+        run: npm run lint --if-present
+
+      - name: Run tests (if configured)
+        run: npm test --if-present
+
+  frontend:
+    name: Frontend (React/Vite)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: webClient/pfa_front
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: webClient/pfa_front/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+  build-and-push:
+    name: Build and Push Docker Images
+    needs: [backend, frontend]
+    if: github.ref == 'refs/heads/MBGH09-patch-1' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build & push backend image
+        uses: mr-smithers-excellent/docker-build-push@v7
+        with:
+          image: mbgh09/ide_project
+          tags: backend-latest, backend-${{ github.sha }}
+          registry: docker.io
+          directory: webClient/Back_end
+          dockerfile: webClient/Back_end/Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build & push frontend image
+        uses: mr-smithers-excellent/docker-build-push@v7
+        with:
+          image: mbgh09/ide_project
+          tags: frontend-latest, frontend-${{ github.sha }}
+          registry: docker.io
+          directory: webClient/pfa_front
+          dockerfile: webClient/pfa_front/Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
